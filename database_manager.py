@@ -15,9 +15,9 @@ class DatabaseManager:
         c.execute("SELECT * FROM Beams")
         result = c.fetchall()
 
-        res = []
+        res = {}
         for beam_data in result:
-            res.append(BeamModel(beam_data))
+            res[beam_data[0]] = BeamModel(beam_data)
 
         conn.commit()
         conn.close()

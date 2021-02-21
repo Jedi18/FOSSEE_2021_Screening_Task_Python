@@ -9,6 +9,9 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
         self.setupUi()
 
+    def setController(self, controller):
+        self.controller = controller
+
     def setupUi(self):
         self.setObjectName("MainWindow")
         self.resize(800, 600)
@@ -99,6 +102,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(self)
 
+        self.setupConnections()
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -114,7 +119,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionAdd.setText(_translate("MainWindow", "Add"))
 
+    def setupConnections(self):
+        self.beamList.itemSelectionChanged.connect(self.steelItemSelected)
+
     def populateList(self, sectionList, type):
         if type == "beam":
-            for section in sectionList:
-                self.beamList.addItem(QtWidgets.QListWidgetItem(section.designation))
+            for section_id in sectionList:
+                section = sectionList[section_id]
+                sectionItem = QtWidgets.QListWidgetItem(section.designation)
+                sectionItem.setData(QtCore.Qt.UserRole, section.id)
+                self.beamList.addItem(sectionItem)
+
+    def steelItemSelected(self):
+        beamItemId = self.beamList.selectedItems()[0].data(QtCore.Qt.UserRole)
+        beamItem = self.controller.getBeamData(beamItemId)
+        print("selected item " + str(beamItem.id) + " " + beamItem.designation)
