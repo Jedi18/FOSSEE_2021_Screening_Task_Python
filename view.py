@@ -4,30 +4,42 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.setupUi()
+
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName("tabWidget")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.listWidget_2 = QtWidgets.QListWidget(self.tab)
-        #self.listWidget_2.setGeometry(QtCore.QRect(5, 11, 261, 271))
-        self.listWidget_2.setObjectName("listWidget_2")
-        self.tabWidget.addTab(self.tab, "")
-        self.tab_2 = QtWidgets.QWidget()
-        self.tab_2.setObjectName("tab_2")
-        self.listWidget = QtWidgets.QListWidget(self.tab_2)
-        #self.listWidget.setGeometry(QtCore.QRect(10, 10, 256, 192))
-        self.listWidget.setObjectName("listWidget")
-        self.tabWidget.addTab(self.tab_2, "")
+
+        self.beamTab = QtWidgets.QWidget()
+        self.beamTab.setObjectName("beamTab")
+        self.beamList = QtWidgets.QListWidget(self.beamTab)
+        self.beamList.setObjectName("beamList")
+        self.tabWidget.addTab(self.beamTab, "")
+
+        self.channelTab = QtWidgets.QWidget()
+        self.channelTab.setObjectName("channelTab")
+        self.channelList = QtWidgets.QListWidget(self.channelTab)
+        self.channelList.setObjectName("channelList")
+        self.tabWidget.addTab(self.channelTab, "")
+
+        self.angleTab = QtWidgets.QWidget()
+        self.angleTab.setObjectName("angleTab")
+        self.angleList = QtWidgets.QListWidget(self.angleTab)
+        self.angleList.setObjectName("angleList")
+        self.tabWidget.addTab(self.angleTab, "")
+
         self.verticalLayout.addWidget(self.tabWidget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -59,39 +71,40 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.lineEdit)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_2.addWidget(self.scrollArea)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         #self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.setStatusBar(self.statusbar)
+        self.toolBar = QtWidgets.QToolBar(self)
         self.toolBar.setObjectName("toolBar")
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.actionLoad_Database = QtWidgets.QAction(MainWindow)
+        self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.actionLoad_Database = QtWidgets.QAction(self)
         self.actionLoad_Database.setObjectName("actionLoad_Database")
-        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionExit = QtWidgets.QAction(self)
         self.actionExit.setObjectName("actionExit")
-        self.actionAdd = QtWidgets.QAction(MainWindow)
+        self.actionAdd = QtWidgets.QAction(self)
         self.actionAdd.setObjectName("actionAdd")
         self.menuFile.addAction(self.actionAdd)
         self.menuFile.addAction(self.actionLoad_Database)
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi()
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Tab 1"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Tab 2"))
+        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.beamTab), _translate("MainWindow", "Beam"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.channelTab), _translate("MainWindow", "Channel"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.angleTab), _translate("MainWindow", "Angle"))
         self.pushButton.setText(_translate("MainWindow", "Add"))
         self.pushButton_2.setText(_translate("MainWindow", "Edit"))
         self.label.setText(_translate("MainWindow", "TextLabel"))
@@ -100,3 +113,8 @@ class Ui_MainWindow(object):
         self.actionLoad_Database.setText(_translate("MainWindow", "Load Database"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionAdd.setText(_translate("MainWindow", "Add"))
+
+    def populateList(self, sectionList, type):
+        if type == "beam":
+            for section in sectionList:
+                self.beamList.addItem(QtWidgets.QListWidgetItem(section['name']))

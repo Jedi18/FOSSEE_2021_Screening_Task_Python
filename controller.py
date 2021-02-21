@@ -8,7 +8,7 @@ class Controller:
     def __init__(self, ui):
         self.ui = ui
         self.database_manager = DatabaseManager("")
-        print(self.database_manager.fetchBeams())
+        self.populateSteelSectionLists()
 
     def populateSteelSectionLists(self):
-        pass
+        self.ui.populateList(self.database_manager.fetchBeams(), 'beam')

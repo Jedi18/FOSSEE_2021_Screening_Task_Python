@@ -7,7 +7,6 @@ import sqlite3
 class DatabaseManager:
     def __init__(self, database_path):
         self.database_path = database_path
-        print("databse manager!")
 
     def fetchBeams(self):
         return [{"name" : "boop"}]
