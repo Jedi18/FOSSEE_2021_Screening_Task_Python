@@ -117,4 +117,4 @@ class MainWindow(QtWidgets.QMainWindow):
     def populateList(self, sectionList, type):
         if type == "beam":
             for section in sectionList:
-                self.beamList.addItem(QtWidgets.QListWidgetItem(section['name']))
+                self.beamList.addItem(QtWidgets.QListWidgetItem(section.designation))

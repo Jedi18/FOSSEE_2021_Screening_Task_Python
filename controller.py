@@ -7,7 +7,7 @@ from database_manager import DatabaseManager
 class Controller:
     def __init__(self, ui):
         self.ui = ui
-        self.database_manager = DatabaseManager("")
+        self.database_manager = DatabaseManager('steel_sections.sqlite')
         self.populateSteelSectionLists()
 
     def populateSteelSectionLists(self):
