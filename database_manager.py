@@ -14,10 +14,19 @@ class DatabaseManager:
         c = conn.cursor()
         c.execute("SELECT * FROM Beams")
         result = c.fetchall()
+        BeamModel.column_names = [description[0] for description in c.description]
+        BeamModel.column_names = BeamModel.column_names[2:]
 
         res = {}
         for beam_data in result:
             res[beam_data[0]] = BeamModel(beam_data)
+
+        c = c.execute('PRAGMA TABLE_INFO(Beams)')
+        BeamModel.column_types = [info[2].split('(')[0].strip() for info in c.fetchall()]
+        BeamModel.column_types = BeamModel.column_types[2:]
+
+        print(BeamModel.column_names)
+        print(BeamModel.column_types)
 
         conn.commit()
         conn.close()

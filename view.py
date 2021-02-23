@@ -63,15 +63,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.widget = QtWidgets.QWidget(self.scrollAreaWidgetContents)
         self.widget.setGeometry(QtCore.QRect(10, 20, 139, 49))
         self.widget.setObjectName("widget")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.widget)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.propertyLayout = QtWidgets.QVBoxLayout(self.widget)
+        self.propertyLayout.setContentsMargins(0, 0, 0, 0)
+        self.propertyLayout.setObjectName("propertyLayout")
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setObjectName("label")
-        self.verticalLayout_2.addWidget(self.label)
+        self.propertyLayout.addWidget(self.label)
         self.lineEdit = QtWidgets.QLineEdit(self.widget)
         self.lineEdit.setObjectName("lineEdit")
-        self.verticalLayout_2.addWidget(self.lineEdit)
+        self.propertyLayout.addWidget(self.lineEdit)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_2.addWidget(self.scrollArea)
         self.setCentralWidget(self.centralwidget)
@@ -120,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionAdd.setText(_translate("MainWindow", "Add"))
 
     def setupConnections(self):
-        self.beamList.itemSelectionChanged.connect(self.steelItemSelected)
+        self.beamList.itemSelectionChanged.connect(self.beamItemSelected)
 
     def populateList(self, sectionList, type):
         if type == "beam":
@@ -130,7 +130,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 sectionItem.setData(QtCore.Qt.UserRole, section.id)
                 self.beamList.addItem(sectionItem)
 
-    def steelItemSelected(self):
+    def beamItemSelected(self):
         beamItemId = self.beamList.selectedItems()[0].data(QtCore.Qt.UserRole)
         beamItem = self.controller.getBeamData(beamItemId)
-        print("selected item " + str(beamItem.id) + " " + beamItem.designation)
+        self.populateSteelSectionProperties(beamItem, "beam")
+
+    def populateSteelSectionProperties(self, steelSection, type):
+        pass
