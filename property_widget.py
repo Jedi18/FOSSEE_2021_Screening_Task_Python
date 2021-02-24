@@ -57,6 +57,39 @@ class PropertyWidget(QtWidgets.QWidget):
         for i in range(0, len(column_names)):
             self.generatePropertyUI(column_names[i], column_types[i], "channel")
 
+    def setProperties(self, data, column_names, column_types, section_type):
+        if section_type == 'beam':
+            contentWidget = self.beamContent
+        elif section_type == 'angle':
+            contentWidget = self.angleContent
+        elif section_type == 'channel':
+            contentWidget = self.channelContent
+        else:
+            return
+
+        for i in range(0, len(data)):
+            if column_types[i] == 'INTEGER':
+                spinBox = contentWidget.findChild(QtWidgets.QSpinBox, column_names[i])
+                if data[i] == None:
+                    spinBox.setEnabled(False)
+                else:
+                    spinBox.setValue(int(data[i]))
+                    spinBox.setEnabled(True)
+            elif column_types[i] == 'VARCHAR':
+                lineEdit = contentWidget.findChild(QtWidgets.QLineEdit, column_names[i])
+                if data[i] == None:
+                    lineEdit.setEnabled(False)
+                else:
+                    lineEdit.setText(str(data[i]))
+                    lineEdit.setEnabled(True)
+            elif column_types[i] == 'REAL':
+                doubleSpinBox = contentWidget.findChild(QtWidgets.QDoubleSpinBox, column_names[i])
+                if data[i] == None:
+                    doubleSpinBox.setEnabled(False)
+                else:
+                    doubleSpinBox.setValue(float(data[i]))
+                    doubleSpinBox.setEnabled(True)
+
     def generatePropertyUI(self, label, type, section_type):
         horizLayout = QtWidgets.QHBoxLayout()
 
@@ -65,17 +98,24 @@ class PropertyWidget(QtWidgets.QWidget):
         horizLayout.addWidget(lab)
         lab.setText("{} : ".format(str(label)))
 
+        if section_type == 'beam':
+            parentContent = self.beamContent
+        elif section_type == 'angle':
+            parentContent = self.angleContent
+        else:
+            parentContent = self.channelContent
+
         if type == 'INTEGER':
-            spinBox = QtWidgets.QSpinBox(self.beamContent)
-            spinBox.setObjectName("spinBox_{}".format(label))
+            spinBox = QtWidgets.QSpinBox(parentContent)
+            spinBox.setObjectName(label)
             horizLayout.addWidget(spinBox)
         elif type == 'VARCHAR':
-            lineEdit = QtWidgets.QLineEdit(self.beamContent)
-            lineEdit.setObjectName("lineEdit_{}".format(label))
+            lineEdit = QtWidgets.QLineEdit(parentContent)
+            lineEdit.setObjectName(label)
             horizLayout.addWidget(lineEdit)
         elif type == 'REAL':
-            doubleSpinBox = QtWidgets.QDoubleSpinBox(self.beamContent)
-            doubleSpinBox.setObjectName("doubleSpinBox_{}".format(label))
+            doubleSpinBox = QtWidgets.QDoubleSpinBox(parentContent)
+            doubleSpinBox.setObjectName(label)
             horizLayout.addWidget(doubleSpinBox)
 
         if section_type == 'beam':

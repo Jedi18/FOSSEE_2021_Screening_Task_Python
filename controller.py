@@ -22,3 +22,9 @@ class Controller:
 
     def getBeamData(self, beamId):
         return self.beams[beamId]
+
+    def getAngleData(self, angleId):
+        return self.angles[angleId]
+
+    def getChannelData(self, channelId):
+        return self.channels[channelId]
