@@ -13,8 +13,12 @@ class Controller:
         self.populateSteelSectionLists()
 
     def populateSteelSectionLists(self):
-        self.beams = self.database_manager.fetchBeams()
+        self.beams = self.database_manager.fetchSection('beam')
+        self.angles = self.database_manager.fetchSection('angle')
+        self.channels = self.database_manager.fetchSection('channel')
         self.ui.populateList(self.beams, 'beam')
+        self.ui.populateList(self.angles, 'angle')
+        self.ui.populateList(self.channels, 'channel')
 
     def getBeamData(self, beamId):
         return self.beams[beamId]

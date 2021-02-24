@@ -4,6 +4,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from beam_model import BeamModel
+from angle_model import AngleModel
+from channel_model import ChannelModel
 from property_widget import PropertyWidget
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -105,6 +107,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setupConnections(self):
         self.beamList.itemSelectionChanged.connect(self.beamItemSelected)
+        self.angleList.itemSelectionChanged.connect(self.angleItemSelected)
+        self.channelList.itemSelectionChanged.connect(self.channelItemSelected)
 
     def populateList(self, sectionList, type):
         if type == "beam":
@@ -115,11 +119,43 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.beamList.addItem(sectionItem)
 
             self.propertyWidget.setupBeamProperties(BeamModel.column_names, BeamModel.column_types)
+        elif type == "angle":
+            for section_id in sectionList:
+                section = sectionList[section_id]
+                sectionItem = QtWidgets.QListWidgetItem(section.designation)
+                sectionItem.setData(QtCore.Qt.UserRole, section.id)
+                self.angleList.addItem(sectionItem)
+
+            self.propertyWidget.setupAngleProperties(AngleModel.column_names, AngleModel.column_types)
+        elif type ==  "channel":
+            for section_id in sectionList:
+                section = sectionList[section_id]
+                sectionItem = QtWidgets.QListWidgetItem(section.designation)
+                sectionItem.setData(QtCore.Qt.UserRole, section.id)
+                self.channelList.addItem(sectionItem)
+
+            self.propertyWidget.setupChannelProperties(ChannelModel.column_names, ChannelModel.column_types)
 
     def beamItemSelected(self):
+        self.propertyWidget.changePropertyArea('beam')
+
         beamItemId = self.beamList.selectedItems()[0].data(QtCore.Qt.UserRole)
         beamItem = self.controller.getBeamData(beamItemId)
         self.populateSteelSectionProperties(beamItem, "beam")
+
+    def angleItemSelected(self):
+        self.propertyWidget.changePropertyArea('angle')
+
+        angleItemId = self.angleList.selectedItems()[0].data(QtCore.Qt.UserRole)
+        angleItem = self.controller.getBeamData(angleItemId)
+        self.populateSteelSectionProperties(angleItem, "angle")
+
+    def channelItemSelected(self):
+        self.propertyWidget.changePropertyArea('channel')
+
+        channelItemId = self.beamList.selectedItems()[0].data(QtCore.Qt.UserRole)
+        channelItem = self.controller.getBeamData(channelItemId)
+        self.populateSteelSectionProperties(channelItem, "channel")
 
     def populateSteelSectionProperties(self, steelSection, type):
         #self.generatePropertyUI("ID", steelSection.id)
