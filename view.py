@@ -3,6 +3,8 @@
 # Manages the view (GUI) part of the application
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from beam_model import BeamModel
+from property_widget import PropertyWidget
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -54,29 +56,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout.addWidget(self.pushButton_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
-        self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        #self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 383, 511))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.widget = QtWidgets.QWidget(self.scrollAreaWidgetContents)
-        self.widget.setGeometry(QtCore.QRect(10, 20, 139, 49))
-        self.widget.setObjectName("widget")
-        self.propertyLayout = QtWidgets.QVBoxLayout(self.widget)
-        self.propertyLayout.setContentsMargins(0, 0, 0, 0)
-        self.propertyLayout.setObjectName("propertyLayout")
-        self.label = QtWidgets.QLabel(self.widget)
-        self.label.setObjectName("label")
-        self.propertyLayout.addWidget(self.label)
-        self.lineEdit = QtWidgets.QLineEdit(self.widget)
-        self.lineEdit.setObjectName("lineEdit")
-        self.propertyLayout.addWidget(self.lineEdit)
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.horizontalLayout_2.addWidget(self.scrollArea)
+##
+        self.propertyWidget = PropertyWidget(self.centralwidget)
+        self.horizontalLayout_2.addWidget(self.propertyWidget)
+
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
-        #self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -112,7 +97,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.angleTab), _translate("MainWindow", "Angle"))
         self.pushButton.setText(_translate("MainWindow", "Add"))
         self.pushButton_2.setText(_translate("MainWindow", "Edit"))
-        self.label.setText(_translate("MainWindow", "TextLabel"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionLoad_Database.setText(_translate("MainWindow", "Load Database"))
@@ -130,10 +114,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 sectionItem.setData(QtCore.Qt.UserRole, section.id)
                 self.beamList.addItem(sectionItem)
 
+            self.propertyWidget.setupBeamProperties(BeamModel.column_names, BeamModel.column_types)
+
     def beamItemSelected(self):
         beamItemId = self.beamList.selectedItems()[0].data(QtCore.Qt.UserRole)
         beamItem = self.controller.getBeamData(beamItemId)
         self.populateSteelSectionProperties(beamItem, "beam")
 
     def populateSteelSectionProperties(self, steelSection, type):
+        #self.generatePropertyUI("ID", steelSection.id)
+        #self.generatePropertyUI("Designation", steelSection.designation)
         pass
