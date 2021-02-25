@@ -50,17 +50,44 @@ class MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addWidget(self.tabWidget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout.addWidget(self.pushButton_2)
+        self.addButton = QtWidgets.QPushButton(self.centralwidget)
+        self.addButton.setObjectName("addPushButton")
+        self.horizontalLayout.addWidget(self.addButton)
+        self.editButton = QtWidgets.QPushButton(self.centralwidget)
+        self.editButton.setObjectName("editPushButton")
+        self.horizontalLayout.addWidget(self.editButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
 ##
+        self.rightWidget = QtWidgets.QWidget()
+        self.rightVerticalLayout = QtWidgets.QVBoxLayout()
+        self.rightWidget.setLayout(self.rightVerticalLayout)
+
         self.propertyWidget = PropertyWidget(self.centralwidget)
-        self.horizontalLayout_2.addWidget(self.propertyWidget)
+        self.sectionTypeComboBox = QtWidgets.QComboBox(self.rightWidget)
+
+        self.finishButton = QtWidgets.QPushButton(self.rightWidget)
+        self.finishButton.setObjectName("finishButton")
+        self.finishButton.setVisible(False)
+        self.finishButton.setText("Finish")
+
+        self.cancelButton = QtWidgets.QPushButton(self.rightWidget)
+        self.cancelButton.setObjectName("cancelButton")
+        self.cancelButton.setVisible(False)
+        self.cancelButton.setText("Cancel")
+
+        self.button2Layout = QtWidgets.QHBoxLayout()
+        self.button2Layout.addWidget(self.finishButton)
+        self.button2Layout.addWidget(self.cancelButton)
+
+        self.sectionTypeComboBox.setVisible(False)
+        self.sectionTypeComboBox.addItem("Beam")
+        self.sectionTypeComboBox.addItem("Angle")
+        self.sectionTypeComboBox.addItem("Channel")
+        self.rightVerticalLayout.addWidget(self.sectionTypeComboBox)
+        self.rightVerticalLayout.addWidget(self.propertyWidget)
+        self.rightVerticalLayout.addLayout(self.button2Layout)
+        self.horizontalLayout_2.addWidget(self.rightWidget)
 
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
@@ -97,8 +124,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.beamTab), _translate("MainWindow", "Beam"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.channelTab), _translate("MainWindow", "Channel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.angleTab), _translate("MainWindow", "Angle"))
-        self.pushButton.setText(_translate("MainWindow", "Add"))
-        self.pushButton_2.setText(_translate("MainWindow", "Edit"))
+        self.addButton.setText(_translate("MainWindow", "Add"))
+        self.editButton.setText(_translate("MainWindow", "Edit"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionLoad_Database.setText(_translate("MainWindow", "Load Database"))
@@ -109,6 +136,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.beamList.itemSelectionChanged.connect(self.beamItemSelected)
         self.angleList.itemSelectionChanged.connect(self.angleItemSelected)
         self.channelList.itemSelectionChanged.connect(self.channelItemSelected)
+        self.addButton.clicked.connect(self.addSectionItem)
+        self.actionAdd.triggered.connect(self.addSectionItem)
+        self.finishButton.clicked.connect(self.finishSelected)
+        self.cancelButton.clicked.connect(self.cancelSelected)
+        self.sectionTypeComboBox.activated.connect(self.sectionTypeComboBoxChanged)
 
     def populateList(self, sectionList, type):
         if type == "beam":
@@ -156,3 +188,33 @@ class MainWindow(QtWidgets.QMainWindow):
         channelItemId = self.channelList.selectedItems()[0].data(QtCore.Qt.UserRole)
         channelItem = self.controller.getChannelData(channelItemId)
         self.propertyWidget.setProperties(channelItem.data, ChannelModel.column_names, ChannelModel.column_types, 'channel')
+
+    def addSectionItem(self):
+        self.sectionTypeComboBox.setVisible(True)
+        self.finishButton.setVisible(True)
+        self.cancelButton.setVisible(True)
+        self.tabWidget.setEnabled(False)
+        self.editButton.setEnabled(False)
+        self.addButton.setEnabled(False)
+        self.propertyWidget.setMode('ADD', self.sectionTypeComboBox.currentText().lower())
+
+    def cancelSelected(self):
+        self.sectionTypeComboBox.setVisible(False)
+        self.finishButton.setVisible(False)
+        self.cancelButton.setVisible(False)
+        self.tabWidget.setEnabled(True)
+        self.editButton.setEnabled(True)
+        self.addButton.setEnabled(True)
+        self.propertyWidget.setMode('VIEW')
+
+    def finishSelected(self):
+        self.sectionTypeComboBox.setVisible(False)
+        self.finishButton.setVisible(False)
+        self.cancelButton.setVisible(False)
+        self.tabWidget.setEnabled(True)
+        self.editButton.setEnabled(True)
+        self.addButton.setEnabled(True)
+        self.propertyWidget.setMode('VIEW')
+
+    def sectionTypeComboBoxChanged(self):
+        self.propertyWidget.setMode('ADD', self.sectionTypeComboBox.currentText().lower())

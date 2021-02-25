@@ -11,6 +11,7 @@ class PropertyWidget(QtWidgets.QWidget):
 
         self.listBox = QtWidgets.QVBoxLayout(self)
         self.setLayout(self.listBox)
+        self.MODE = 'VIEW'
 
         self.scroll = QtWidgets.QScrollArea(self)
         self.listBox.addWidget(self.scroll)
@@ -90,6 +91,34 @@ class PropertyWidget(QtWidgets.QWidget):
                     doubleSpinBox.setValue(float(data[i]))
                     doubleSpinBox.setEnabled(True)
 
+    def clearProperties(self, section_type):
+        if section_type == 'beam':
+            contentWidget = self.beamContent
+        elif section_type == 'angle':
+            contentWidget = self.angleContent
+        elif section_type == 'channel':
+            contentWidget = self.channelContent
+        else:
+            return
+
+        lineEditsList = contentWidget.findChildren(QtWidgets.QLineEdit)
+        spinBoxList = contentWidget.findChildren(QtWidgets.QSpinBox)
+        doubleSpinBoxList = contentWidget.findChildren(QtWidgets.QDoubleSpinBox)
+
+        for lineEdit in lineEditsList:
+            lineEdit.clear()
+            lineEdit.setEnabled(True)
+
+        for spinBox in spinBoxList:
+            spinBox.setValue(0)
+            spinBox.setEnabled(True)
+
+        for doubleSpinBox in doubleSpinBoxList:
+            doubleSpinBox.setValue(0)
+            doubleSpinBox.setEnabled(True)
+
+        self.changePropertyArea(section_type)
+
     def generatePropertyUI(self, label, type, section_type):
         horizLayout = QtWidgets.QHBoxLayout()
 
@@ -107,6 +136,7 @@ class PropertyWidget(QtWidgets.QWidget):
 
         if type == 'INTEGER':
             spinBox = QtWidgets.QSpinBox(parentContent)
+            spinBox.setMaximum(1000000)
             spinBox.setObjectName(label)
             horizLayout.addWidget(spinBox)
         elif type == 'VARCHAR':
@@ -115,6 +145,7 @@ class PropertyWidget(QtWidgets.QWidget):
             horizLayout.addWidget(lineEdit)
         elif type == 'REAL':
             doubleSpinBox = QtWidgets.QDoubleSpinBox(parentContent)
+            doubleSpinBox.setMaximum(1000000)
             doubleSpinBox.setObjectName(label)
             horizLayout.addWidget(doubleSpinBox)
 
@@ -127,3 +158,11 @@ class PropertyWidget(QtWidgets.QWidget):
 
     def changePropertyArea(self, type):
         self.scrollContent.setCurrentIndex(self.sectionTypeToIndex[type])
+
+    def setMode(self, mode, section_type = None):
+        self.MODE = mode
+
+        if mode == 'ADD':
+            self.clearProperties(section_type)
+        elif mode == 'VIEW':
+            self.changePropertyArea('empty')
