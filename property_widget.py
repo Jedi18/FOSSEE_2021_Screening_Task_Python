@@ -166,7 +166,7 @@ class PropertyWidget(QtWidgets.QWidget):
             contentWidget = self.channelContent
 
         newData = []
-        for i in range(1, len(column_names)):
+        for i in range(0, len(column_names)):
             if column_types[i] == 'INTEGER':
                 spinBox = contentWidget.findChild(QtWidgets.QSpinBox, column_names[i])
                 newData.append(int(spinBox.value()))

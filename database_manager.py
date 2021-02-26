@@ -8,8 +8,9 @@ from angle_model import AngleModel
 from channel_model import ChannelModel
 
 class DatabaseManager:
-    def __init__(self, database_path):
+    def __init__(self, controller, database_path):
         self.database_path = database_path
+        self.controller = controller
 
     def fetchSection(self, type):
         conn = sqlite3.connect(self.database_path)
@@ -64,15 +65,6 @@ class DatabaseManager:
         conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
 
-        # fetch max id for new id for the newly added section
-        if type == 'beam':
-            c = c.execute('SELECT max(id) from Beams')
-        elif type == 'angle':
-            c = c.execute('SELECT max(id) from Angles')
-        else:
-            c = c.execute('SELECT max(id) from Channels')
-        newid = c.fetchone()[0] + 1
-
         sql = "INSERT INTO "
 
         is_varchar = []
@@ -113,9 +105,9 @@ class DatabaseManager:
                     sql += ","
             sql += ")"
 
-        sql += " values(" + str(newid) + ","
+        sql += " values("
         for i in range(0,len(newData)):
-            if is_varchar[i+1]:
+            if is_varchar[i]:
                 sql += '"'
                 sql += str(newData[i])
                 sql += '"'
@@ -125,6 +117,9 @@ class DatabaseManager:
                 sql += ","
         sql += ")"
 
-        c.execute(sql)
+        try:
+            c.execute(sql)
+        except:
+            self.controller.showError("Error during insertion")
         conn.commit()
         conn.close()

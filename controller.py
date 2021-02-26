@@ -9,7 +9,7 @@ class Controller:
         self.ui = ui
         self.ui.setController(self)
 
-        self.database_manager = DatabaseManager('steel_sections.sqlite')
+        self.database_manager = DatabaseManager(self, 'steel_sections.sqlite')
         self.populateSteelSectionLists()
 
     def populateSteelSectionLists(self):
@@ -34,3 +34,6 @@ class Controller:
 
     def addNewData(self, newData, section_type):
         self.database_manager.addSection(newData, section_type)
+
+    def showError(self, errorMessage):
+        self.ui.showError(errorMessage)
