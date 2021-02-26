@@ -214,6 +214,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget.setEnabled(True)
         self.editButton.setEnabled(True)
         self.addButton.setEnabled(True)
+
+        currentSection = self.sectionTypeComboBox.currentText().lower()
+        if currentSection == 'beam':
+            column_names = BeamModel.column_names
+            column_types = BeamModel.column_types
+        elif currentSection == 'angle':
+            column_names = AngleModel.column_names
+            column_types = AngleModel.column_types
+        else:
+            column_names = ChannelModel.column_names
+            column_types = ChannelModel.column_types
+        newData = self.propertyWidget.getData(column_names, column_types)
+        self.controller.addNewData(newData, currentSection)
         self.propertyWidget.setMode('VIEW')
 
     def sectionTypeComboBoxChanged(self):

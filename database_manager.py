@@ -1,6 +1,6 @@
 # Author : Jedi18
 #
-# Database manager for handling fetching data from database
+# Database manager for handling and fetching data from database
 
 import sqlite3
 from beam_model import BeamModel
@@ -59,3 +59,72 @@ class DatabaseManager:
         conn.commit()
         conn.close()
         return res
+
+    def addSection(self, newData, type):
+        conn = sqlite3.connect(self.database_path)
+        c = conn.cursor()
+
+        # fetch max id for new id for the newly added section
+        if type == 'beam':
+            c = c.execute('SELECT max(id) from Beams')
+        elif type == 'angle':
+            c = c.execute('SELECT max(id) from Angles')
+        else:
+            c = c.execute('SELECT max(id) from Channels')
+        newid = c.fetchone()[0] + 1
+
+        sql = "INSERT INTO "
+
+        is_varchar = []
+        if type == 'beam':
+            sql += "Beams("
+            for col in range(0,len(BeamModel.column_names)):
+                if BeamModel.column_types[col] == 'VARCHAR':
+                    is_varchar.append(True)
+                else:
+                    is_varchar.append(False)
+
+                sql += BeamModel.column_names[col]
+                if col != len(BeamModel.column_names)-1:
+                    sql += ","
+            sql += ")"
+        elif type == 'angle':
+            sql += "Angles("
+            for col in range(0,len(AngleModel.column_names)):
+                if AngleModel.column_types[col] == 'VARCHAR':
+                    is_varchar.append(True)
+                else:
+                    is_varchar.append(False)
+
+                sql += '"' + AngleModel.column_names[col] + '"'
+                if col != len(AngleModel.column_names)-1:
+                    sql += ","
+            sql += ")"
+        else:
+            sql += "Channels("
+            for col in range(0,len(ChannelModel.column_names)):
+                if ChannelModel.column_types[col] == 'VARCHAR':
+                    is_varchar.append(True)
+                else:
+                    is_varchar.append(False)
+
+                sql += ChannelModel.column_names[col]
+                if col != len(ChannelModel.column_names)-1:
+                    sql += ","
+            sql += ")"
+
+        sql += " values(" + str(newid) + ","
+        for i in range(0,len(newData)):
+            if is_varchar[i+1]:
+                sql += '"'
+                sql += str(newData[i])
+                sql += '"'
+            else:
+                sql += str(newData[i])
+            if i != len(newData)-1:
+                sql += ","
+        sql += ")"
+
+        c.execute(sql)
+        conn.commit()
+        conn.close()

@@ -45,6 +45,7 @@ class PropertyWidget(QtWidgets.QWidget):
 
         self.scroll.setWidget(self.scrollContent)
         self.scrollContent.setCurrentIndex(self.sectionTypeToIndex['empty'])
+        self.currentType = 'empty'
 
     def setupBeamProperties(self, column_names, column_types):
         for i in range(0, len(column_names)):
@@ -156,8 +157,31 @@ class PropertyWidget(QtWidgets.QWidget):
         else:
             self.scrollChannelLayout.addLayout(horizLayout)
 
+    def getData(self, column_names, column_types):
+        if self.currentType == 'beam':
+            contentWidget = self.beamContent
+        elif self.currentType == 'angle':
+            contentWidget = self.angleContent
+        else:
+            contentWidget = self.channelContent
+
+        newData = []
+        for i in range(1, len(column_names)):
+            if column_types[i] == 'INTEGER':
+                spinBox = contentWidget.findChild(QtWidgets.QSpinBox, column_names[i])
+                newData.append(int(spinBox.value()))
+            elif column_types[i] == 'VARCHAR':
+                lineEdit = contentWidget.findChild(QtWidgets.QLineEdit, column_names[i])
+                newData.append(str(lineEdit.text()))
+            elif column_types[i] == 'REAL':
+                doubleSpinBox = contentWidget.findChild(QtWidgets.QDoubleSpinBox, column_names[i])
+                newData.append(float(doubleSpinBox.value()))
+
+        return newData
+
     def changePropertyArea(self, type):
         self.scrollContent.setCurrentIndex(self.sectionTypeToIndex[type])
+        self.currentType = type
 
     def setMode(self, mode, section_type = None):
         self.MODE = mode

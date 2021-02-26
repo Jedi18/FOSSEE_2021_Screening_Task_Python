@@ -31,3 +31,6 @@ class Controller:
 
     def getChannelData(self, channelId):
         return self.channels[channelId]
+
+    def addNewData(self, newData, section_type):
+        self.database_manager.addSection(newData, section_type)
